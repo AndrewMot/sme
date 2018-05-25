@@ -26,3 +26,5 @@ Input file must be located in <root project>/src/test/resources for this case. A
 
 Add a Pattern
 --------------
+
+In order to add a new pattern, read Class Pattern definition and build a new pattern object to a list in the testRun body case.
