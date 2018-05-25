@@ -6,16 +6,17 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 
 import sme.model.Pattern;
 import sme.model.Result;
-import sme.util.Utility;
+import sme.util.Constants;
 
 /**
- * Class for thread that process a url given and prints a output file with the
+ * Class for thread that process an URL given and prints an output file with the
  * found matches
  * 
  * @author Andrés Motavita
@@ -70,8 +71,8 @@ public class ProcessURL implements Runnable {
 		}
 		findMatches();
 		try {
-			String outputFile = String.format("%s%s.%s", Utility.DEFAULT_OUTPUT_FILE, this.name,
-					Utility.FILE_EXTENSION);
+			String outputFile = String.format("%s%s.%s", Constants.DEFAULT_OUTPUT_FILE, this.name,
+					Constants.FILE_EXTENSION);
 			writeMatches(new BufferedWriter(new FileWriter(outputFile)));
 		} catch (IOException e) {
 			message = String.format("Thread: %s Process: %s - Error writing in output. Error: %s",
@@ -120,40 +121,19 @@ public class ProcessURL implements Runnable {
 	}
 
 	/**
-	 * Look for all matches. If a proper name pattern is given, this method will use
-	 * NER Implementation because a proper name is not recognizable with a string
-	 * pattern. Words such as This, I, The Rain should not be taken as proper names.
+	 * Look for all matches.
 	 */
 	public void findMatches() {
 		String message = String.format("Thread: %s Process: %s - Start Finding Matches with given patterns",
 				Thread.currentThread().getName(), this.name);
 		log.info(message);
-		Pattern properName = new Pattern(Utility.PROPER_NAME_PATTERN_TITLE, Utility.PROPER_NAME_PATTERN);
-		if (this.patterns.contains(properName)) {
-			message = String.format("Thread: %s Process: %s - There is a Proper Name Pattern to process.",
-					Thread.currentThread().getName(), this.name);
-			log.info(message);
-			this.patterns.remove(properName);
-			try {
-				res.getMatches().put(Utility.PROPER_NAME_PATTERN_TITLE,
-						new LinkedList<String>(NERImp.getMatches(res.getWebTextFromURL())));
-
-			} catch (ClassCastException | ClassNotFoundException | IOException e) {
-				message = String.format(
-						"Thread: %s Process: %s - Error obtaining matches for proper name pattern. Error: %s",
-						Thread.currentThread().getName(), this.name, e.getMessage());
-				log.error(message);
-			}
-		}
-
-		String words[] = null;
+		findMatchesForProperNamePattern();
 		List<String> mat = null;
 		for (Pattern pattern : this.patterns) {
-			words = res.getWebTextFromURL().split(" ");
 			mat = new LinkedList<>();
-			for (String w : words) {
-				if (!w.isEmpty() && pattern.matches(w))
-					mat.add(w);
+			Matcher m = java.util.regex.Pattern.compile(pattern.getRegex()).matcher(res.getWebTextFromURL());
+			while (m.find()) {
+				mat.add(m.group());
 			}
 			if (!mat.isEmpty())
 				this.res.getMatches().put(pattern.getName(), mat);
@@ -161,6 +141,31 @@ public class ProcessURL implements Runnable {
 		message = String.format("Thread: %s Process: %s - Finished finding Matches with given patterns",
 				Thread.currentThread().getName(), this.name);
 		log.info(message);
+	}
+
+	/**
+	 * Look for all matches if a proper name pattern is given. This method will use
+	 * NER Implementation because a proper name is not recognizable with a regular
+	 * expression pattern. Words such as This, I, The Rain, should not be taken as
+	 * proper names.
+	 */
+	public void findMatchesForProperNamePattern() {
+		String message = null;
+		Pattern properName = new Pattern(Constants.PROPER_NAME_PATTERN_TITLE, Constants.PROPER_NAME_PATTERN);
+		if (this.patterns.remove(properName)) {
+			message = String.format("Thread: %s Process: %s - There is a Proper Name Pattern to process.",
+					Thread.currentThread().getName(), this.name);
+			log.info(message);
+			try {
+				res.getMatches().put(Constants.PROPER_NAME_PATTERN_TITLE,
+						new LinkedList<String>(NERImp.getMatches(res.getWebTextFromURL())));
+			} catch (ClassCastException | ClassNotFoundException | IOException e) {
+				message = String.format(
+						"Thread: %s Process: %s - Error obtaining matches for proper name pattern. Error: %s",
+						Thread.currentThread().getName(), this.name, e.getMessage());
+				log.error(message);
+			}
+		}
 	}
 
 	/**
@@ -186,6 +191,22 @@ public class ProcessURL implements Runnable {
 			log.error(message);
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * @return get POJO result
+	 */
+	public Result getRes() {
+		return res;
+	}
+
+	/**
+	 * 
+	 * @return get Patterns
+	 */
+	public List<Pattern> getPatterns() {
+		return patterns;
 	}
 
 	/**

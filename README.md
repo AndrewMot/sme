@@ -21,4 +21,8 @@ If input File is not specified, use:
 		mvn install -DskipTests
 		mvn test
 		
-Input file must be located in <root project>/src/test/resources for this case.
+Input file must be located in <root project>/src/test/resources for this case. A sample input file was located in the previous folder for test purposes.
+
+
+Add a Pattern
+--------------

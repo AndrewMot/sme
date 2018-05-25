@@ -14,7 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import sme.exception.NotInputFileException;
-import sme.util.Utility;
+import sme.util.Constants;
 
 public class TestFileLoader {
 	/**
@@ -34,7 +34,7 @@ public class TestFileLoader {
 	@Test
 	public void testInit() throws IOException, NotInputFileException {
 		String fileName = "TestInputFile";
-		String file = String.format("%s.%s", fileName, Utility.FILE_EXTENSION);
+		String file = String.format("%s.%s", fileName, Constants.FILE_EXTENSION);
 		URL url = Thread.currentThread().getContextClassLoader().getResource(file);
 		FileLoader fl = new FileLoader(url.getPath());
 		fl.init();
@@ -46,10 +46,10 @@ public class TestFileLoader {
 	 */
 	@Test
 	public void throwsNotInputFileFileNotExist() throws IOException, NotInputFileException {
-		String archivo = String.format("%s.%s", Utility.DEFAULT_INPUT_FILE, Utility.FILE_EXTENSION);
+		String archivo = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
 		FileLoader fl = new FileLoader(archivo);
 		exception.expect(NotInputFileException.class);
-		exception.expectMessage(Utility.NOT_INPUT_FILE);
+		exception.expectMessage(Constants.NOT_INPUT_FILE);
 		fl.init();
 	}
 
@@ -60,7 +60,7 @@ public class TestFileLoader {
 	public void throwsNotInputFileEmptyFileName() throws NotInputFileException {
 		FileLoader fl = new FileLoader("");
 		exception.expect(NotInputFileException.class);
-		exception.expectMessage(Utility.NOT_INPUT_FILE);
+		exception.expectMessage(Constants.NOT_INPUT_FILE);
 		fl.init();
 	}
 
@@ -69,7 +69,7 @@ public class TestFileLoader {
 	 */
 	@Test
 	public void testLoadFileNotInitiated() {
-		String archivo = String.format("%s.%s", Utility.DEFAULT_INPUT_FILE, Utility.FILE_EXTENSION);
+		String archivo = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
 		FileLoader fl = new FileLoader(archivo);
 		fl.loadFile();
 		assertFalse("File Loader not initiated", fl.isInitiated());
@@ -81,7 +81,7 @@ public class TestFileLoader {
 	@Test
 	public void testLoadFileEmptyList() throws IOException, NotInputFileException {
 		tmp.create();
-		String file = String.format("%s.%s", Utility.DEFAULT_INPUT_FILE, Utility.FILE_EXTENSION);
+		String file = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
 		FileLoader fl = new FileLoader(tmp.newFile(file).getAbsolutePath());
 		fl.init();
 		fl.loadFile();
@@ -94,7 +94,7 @@ public class TestFileLoader {
 	@Test
 	public void testLoadFile() throws IOException, InterruptedException, NotInputFileException {
 		String fileName = "TestInputFile";
-		String file = String.format("%s.%s", fileName, Utility.FILE_EXTENSION);
+		String file = String.format("%s.%s", fileName, Constants.FILE_EXTENSION);
 		URL url = Thread.currentThread().getContextClassLoader().getResource(file);
 		FileLoader fl = new FileLoader(url.getPath());
 		fl.init();

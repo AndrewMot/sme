@@ -7,7 +7,7 @@ import sme.controller.ProcessURL;
  * @author Andrés Motavita
  *
  */
-public class Utility {
+public class Constants {
 	/**
 	 * Thread Pool size
 	 */
@@ -35,11 +35,11 @@ public class Utility {
 	/**
 	 * Hashtag pattern
 	 */
-	public static final String HASHTAG_PATTERN = "@(\\w+)";
+	public static final String HASHTAG_PATTERN = "(?:(?<=\\s)|^)#(\\w*[A-Za-z_]+\\w*)";
 	/**
 	 * Twitter pattern
 	 */
-	public static final String TWITTER_ACCOUNT_PATTERN = "#(\\w+)";
+	public static final String TWITTER_ACCOUNT_PATTERN = "@(\\w+)";
 	/**
 	 * Flag to identify proper name pattern.
 	 * @see {@link ProcessURL#findMatches()}

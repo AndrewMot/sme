@@ -9,21 +9,46 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.Logger;
 
 import sme.exception.NotInputFileException;
-import sme.util.Utility;
-
+import sme.util.Constants;
+/**
+ * Class for handle the input file with list of URLs
+ * @author Andrés Motavita
+ *
+ */
 public class FileLoader {
+	/**
+	 * Queue with URLs loaded from input file.
+	 */
 	private BlockingQueue<String> urls;
+	/**
+	 * Input file path
+	 */
 	private String inputFile;
+	/**
+	 * Reader
+	 */
 	private BufferedReader in;
+	/**
+	 * Logger
+	 */
 	private final Logger log = Logger.getLogger(FileLoader.class);
+	/**
+	 * Flag
+	 */
 	private boolean initiated;
-	
+	/**
+	 * Constructor
+	 * @param in
+	 */
 	public FileLoader(String in) {
 		this.urls = new LinkedBlockingQueue<>();
 		this.inputFile = in;
 		this.setInitiated(false);
 	}
-
+	/**
+	 * Method to init the load.
+	 * @throws NotInputFileException
+	 */
 	public void init() throws NotInputFileException{
 		log.info("Opening input File");
 		File iF = new File(this.inputFile);
@@ -31,7 +56,7 @@ public class FileLoader {
 		try {
 			if(this.inputFile.isEmpty() || !iF.exists()) {
 				log.warn("Input File was not opened");
-				throw new NotInputFileException(Utility.NOT_INPUT_FILE);
+				throw new NotInputFileException(Constants.NOT_INPUT_FILE);
 			}
 			this.in = new BufferedReader(new FileReader(this.inputFile));
 			this.setInitiated(true);
@@ -40,10 +65,12 @@ public class FileLoader {
 		} catch (Exception e) {
 			message = String.format("Error while opening input file. Error: %s", e.getMessage());
 			log.error(message);
-			throw new NotInputFileException(Utility.NOT_INPUT_FILE);
+			throw new NotInputFileException(Constants.NOT_INPUT_FILE);
 		}
 	}
-	
+	/**
+	 * Load the URL list to a queue
+	 */
 	public void loadFile() {
 		if(!isInitiated()) {
 			log.warn("Input File is not ready.");
@@ -62,15 +89,24 @@ public class FileLoader {
 			log.error(mensaje);
 		}
 	}
-		
+	/**
+	 * 
+	 * @return URLs
+	 */
 	public BlockingQueue<String> getUrls() {
 		return urls;
 	}
-
+	/**
+	 * 
+	 * @return get state of flag
+	 */
 	public boolean isInitiated() {
 		return initiated;
 	}
-
+	/**
+	 * set the flag
+	 * @param initiated
+	 */
 	public void setInitiated(boolean initiated) {
 		this.initiated = initiated;
 	}	

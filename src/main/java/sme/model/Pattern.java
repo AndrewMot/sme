@@ -6,7 +6,7 @@ package sme.model;
  * @author Andrés Motavita
  *
  */
-public class Pattern implements Comparable<Pattern> {
+public class Pattern {
 	/**
 	 * Pattern name
 	 */
@@ -60,13 +60,16 @@ public class Pattern implements Comparable<Pattern> {
 	public void setRegex(String regex) {
 		this.regex = regex;
 	}
-
 	/**
-	 * Compares a pattern with another pattern given.
+	 * Equals
 	 */
-	public int compareTo(Pattern other) {
-		int last = this.name.compareTo(other.name);
-		return last == 0 ? this.name.compareTo(other.name) : last;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj instanceof Pattern) {
+			Pattern other = (Pattern) obj;
+			return other.getName().equals(this.getName()) && other.getRegex().equals(this.getRegex());
+		}
+		return false;
 	}
 
 	/**

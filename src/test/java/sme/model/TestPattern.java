@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import sme.util.Utility;
+import sme.util.Constants;
 
 /**
  * @author Andrés Motavita
@@ -21,9 +21,9 @@ public class TestPattern {
 	@Test
 	public void testMatches() {
 		String patternName = "HashTag Pattern";
-		Pattern pat = new Pattern(patternName, Utility.HASHTAG_PATTERN);
+		Pattern pat = new Pattern(patternName, Constants.HASHTAG_PATTERN);
 		String evaluate = "#DeleteThis";
-		assertEquals("Same Match", evaluate.matches(Utility.HASHTAG_PATTERN), pat.matches(evaluate));
+		assertEquals("Same Match", evaluate.matches(Constants.HASHTAG_PATTERN), pat.matches(evaluate));
 	}
 
 }
