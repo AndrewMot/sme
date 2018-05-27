@@ -61,7 +61,6 @@ public class ProcessURL implements Runnable {
 		String message = String.format("Thread: %s Start. URL to process: %s Process: %s",
 				Thread.currentThread().getName(), this.res.getURL(), this.name);
 		log.info(message);
-
 		if (!loadWebFromURL()) {
 			message = String.format(
 					"Thread: %s Interrupted. Process: %s. There is nothing to process. Probably not HTTPS protocol.",
@@ -70,15 +69,9 @@ public class ProcessURL implements Runnable {
 			return;
 		}
 		findMatches();
-		try {
-			String outputFile = String.format("%s%s.%s", Constants.DEFAULT_OUTPUT_FILE, this.name,
-					Constants.FILE_EXTENSION);
-			writeMatches(new BufferedWriter(new FileWriter(outputFile)));
-		} catch (IOException e) {
-			message = String.format("Thread: %s Process: %s - Error writing in output. Error: %s",
-					Thread.currentThread().getName(), this.name, e.getMessage());
-			log.error(message);
-		}
+		String outputFile = String.format("%s%s.%s", Constants.DEFAULT_OUTPUT_FILE, this.name,
+				Constants.FILE_EXTENSION);
+		writeMatches(outputFile);
 		message = String.format("Thread: %s Done. Process: %s", Thread.currentThread().getName(), this.name);
 		log.info(message);
 	}
@@ -88,21 +81,23 @@ public class ProcessURL implements Runnable {
 	 * 
 	 * @param out
 	 */
-	private void writeMatches(BufferedWriter out) {
+	public void writeMatches(String outputFile) {
 		String line = String.format("Matches for %s%s", res.getURL(), System.lineSeparator());
+		BufferedWriter out = null;
 		try {
+			out = new BufferedWriter(new FileWriter(outputFile));
 			out.write(line);
-			for (Entry<String, List<String>> o : res.getMatches().entrySet()) {
-				line = String.format("Found %d matches for %s%s", o.getValue().size(), o.getKey(),
+			for (Entry<String, List<String>> result : res.getMatches().entrySet()) {
+				line = String.format("Found %d matches for %s%s", result.getValue().size(), result.getKey(),
 						System.lineSeparator());
 				out.write(line);
-				for (String s : o.getValue()) {
-					line = String.format("%s%s", s, System.lineSeparator());
+				for (String matchFound : result.getValue()) {
+					line = String.format("%s%s", matchFound, System.lineSeparator());
 					out.write(line);
 				}
 			}
 		} catch (Exception e) {
-			String message = String.format("Thread: %s Process: %s - Error writing in output. Error: %s",
+			String message = String.format("Thread: %s Process: %s - Error writing in output file. Error: %s",
 					Thread.currentThread().getName(), this.name, e.getMessage());
 			log.error(message);
 		} finally {
@@ -128,15 +123,15 @@ public class ProcessURL implements Runnable {
 				Thread.currentThread().getName(), this.name);
 		log.info(message);
 		findMatchesForProperNamePattern();
-		List<String> mat = null;
+		List<String> matches = null;
 		for (Pattern pattern : this.patterns) {
-			mat = new LinkedList<>();
-			Matcher m = java.util.regex.Pattern.compile(pattern.getRegex()).matcher(res.getWebTextFromURL());
-			while (m.find()) {
-				mat.add(m.group());
+			matches = new LinkedList<>();
+			Matcher matcher = java.util.regex.Pattern.compile(pattern.getRegex()).matcher(res.getWebTextFromURL());
+			while (matcher.find()) {
+				matches.add(matcher.group());
 			}
-			if (!mat.isEmpty())
-				this.res.getMatches().put(pattern.getName(), mat);
+			if (!matches.isEmpty())
+				this.res.getMatches().put(pattern.getName(), matches);
 		}
 		message = String.format("Thread: %s Process: %s - Finished finding Matches with given patterns",
 				Thread.currentThread().getName(), this.name);

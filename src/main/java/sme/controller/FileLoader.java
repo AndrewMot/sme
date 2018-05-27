@@ -10,8 +10,10 @@ import org.apache.log4j.Logger;
 
 import sme.exception.NotInputFileException;
 import sme.util.Constants;
+
 /**
  * Class for handle the input file with list of URLs
+ * 
  * @author Andrés Motavita
  *
  */
@@ -36,8 +38,10 @@ public class FileLoader {
 	 * Flag
 	 */
 	private boolean initiated;
+
 	/**
 	 * Constructor
+	 * 
 	 * @param in
 	 */
 	public FileLoader(String in) {
@@ -45,16 +49,18 @@ public class FileLoader {
 		this.inputFile = in;
 		this.setInitiated(false);
 	}
+
 	/**
 	 * Method to init the load.
+	 * 
 	 * @throws NotInputFileException
 	 */
-	public void init() throws NotInputFileException{
+	public void init() throws NotInputFileException {
 		log.info("Opening input File");
-		File iF = new File(this.inputFile);
+		File inputFile = new File(this.inputFile);
 		String message = null;
 		try {
-			if(this.inputFile.isEmpty() || !iF.exists()) {
+			if (this.inputFile.isEmpty() || !inputFile.exists()) {
 				log.warn("Input File was not opened");
 				throw new NotInputFileException(Constants.NOT_INPUT_FILE);
 			}
@@ -68,19 +74,20 @@ public class FileLoader {
 			throw new NotInputFileException(Constants.NOT_INPUT_FILE);
 		}
 	}
+
 	/**
 	 * Load the URL list to a queue
 	 */
 	public void loadFile() {
-		if(!isInitiated()) {
+		if (!isInitiated()) {
 			log.warn("Input File is not ready.");
 			return;
 		}
 		try {
 			log.info("Loading Input File.");
 			String line = null;
-			while((line = in.readLine()) != null) {
-				if(!line.isEmpty())
+			while ((line = in.readLine()) != null) {
+				if (!line.isEmpty())
 					this.urls.offer(line.trim());
 			}
 			log.info("Load finished.");
@@ -89,6 +96,7 @@ public class FileLoader {
 			log.error(mensaje);
 		}
 	}
+
 	/**
 	 * 
 	 * @return URLs
@@ -96,6 +104,7 @@ public class FileLoader {
 	public BlockingQueue<String> getUrls() {
 		return urls;
 	}
+
 	/**
 	 * 
 	 * @return get state of flag
@@ -103,12 +112,14 @@ public class FileLoader {
 	public boolean isInitiated() {
 		return initiated;
 	}
+
 	/**
 	 * set the flag
+	 * 
 	 * @param initiated
 	 */
 	public void setInitiated(boolean initiated) {
 		this.initiated = initiated;
-	}	
-	
+	}
+
 }
