@@ -44,11 +44,11 @@ public class TestNERImp {
 	@Test
 	public void testGetMatches() {
 		String in = "I go to school at Stanford University, which is located in California.";
-		String[] a = {"Stanford University", "California"};
+		String[] expectedResult = {"Stanford University", "California"};
 		List<String> list;
 		try {
 			list = NERImp.getMatches(in);
-			assertArrayEquals("Result List", list.toArray(), a);
+			assertArrayEquals("Result List", list.toArray(), expectedResult);
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

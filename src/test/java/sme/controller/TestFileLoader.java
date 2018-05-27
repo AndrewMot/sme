@@ -36,9 +36,9 @@ public class TestFileLoader {
 		String fileName = "TestInputFile";
 		String file = String.format("%s.%s", fileName, Constants.FILE_EXTENSION);
 		URL url = Thread.currentThread().getContextClassLoader().getResource(file);
-		FileLoader fl = new FileLoader(url.getPath());
-		fl.init();
-		assertTrue("FileLoader Initiated", fl.isInitiated());
+		FileLoader fileLoader = new FileLoader(url.getPath());
+		fileLoader.init();
+		assertTrue("FileLoader Initiated", fileLoader.isInitiated());
 	}
 
 	/**
@@ -46,11 +46,11 @@ public class TestFileLoader {
 	 */
 	@Test
 	public void throwsNotInputFileFileNotExist() throws IOException, NotInputFileException {
-		String archivo = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
-		FileLoader fl = new FileLoader(archivo);
+		String file = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
+		FileLoader fileLoader = new FileLoader(file);
 		exception.expect(NotInputFileException.class);
 		exception.expectMessage(Constants.NOT_INPUT_FILE);
-		fl.init();
+		fileLoader.init();
 	}
 
 	/**
@@ -58,10 +58,10 @@ public class TestFileLoader {
 	 */
 	@Test
 	public void throwsNotInputFileEmptyFileName() throws NotInputFileException {
-		FileLoader fl = new FileLoader("");
+		FileLoader fileLoader = new FileLoader("");
 		exception.expect(NotInputFileException.class);
 		exception.expectMessage(Constants.NOT_INPUT_FILE);
-		fl.init();
+		fileLoader.init();
 	}
 
 	/**
@@ -69,10 +69,10 @@ public class TestFileLoader {
 	 */
 	@Test
 	public void testLoadFileNotInitiated() {
-		String archivo = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
-		FileLoader fl = new FileLoader(archivo);
-		fl.loadFile();
-		assertFalse("File Loader not initiated", fl.isInitiated());
+		String file = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
+		FileLoader fileLoader = new FileLoader(file);
+		fileLoader.loadFile();
+		assertFalse("File Loader not initiated", fileLoader.isInitiated());
 	}
 
 	/**
@@ -82,10 +82,10 @@ public class TestFileLoader {
 	public void testLoadFileEmptyList() throws IOException, NotInputFileException {
 		tmp.create();
 		String file = String.format("%s.%s", Constants.DEFAULT_INPUT_FILE, Constants.FILE_EXTENSION);
-		FileLoader fl = new FileLoader(tmp.newFile(file).getAbsolutePath());
-		fl.init();
-		fl.loadFile();
-		assertEquals("Empty URL List", 0, fl.getUrls().size());
+		FileLoader fileLoader = new FileLoader(tmp.newFile(file).getAbsolutePath());
+		fileLoader.init();
+		fileLoader.loadFile();
+		assertEquals("Empty URL List", 0, fileLoader.getUrls().size());
 	}
 
 	/**
@@ -96,11 +96,11 @@ public class TestFileLoader {
 		String fileName = "TestInputFile";
 		String file = String.format("%s.%s", fileName, Constants.FILE_EXTENSION);
 		URL url = Thread.currentThread().getContextClassLoader().getResource(file);
-		FileLoader fl = new FileLoader(url.getPath());
-		fl.init();
-		fl.loadFile();
-		String[] t = { "http://www.extremetech.com/", "http://www.technewsworld.com/" };
-		assertArrayEquals("Same Url List", fl.getUrls().toArray(), t);
+		FileLoader fileLoader = new FileLoader(url.getPath());
+		fileLoader.init();
+		fileLoader.loadFile();
+		String[] expectedResult = { "http://www.extremetech.com/", "http://www.technewsworld.com/" };
+		assertArrayEquals("Same Url List", fileLoader.getUrls().toArray(), expectedResult);
 	}
 
 }
